@@ -14,6 +14,20 @@ class MealDetailScreen extends StatelessWidget {
     );
   }
 
+  Widget buildContainer(Widget child) {
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(10)),
+      margin: EdgeInsets.all(3),
+      padding: EdgeInsets.all(3),
+      height: 200,
+      width: 300,
+      child: child,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final mealid = ModalRoute.of(context).settings.arguments as String;
@@ -22,38 +36,50 @@ class MealDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text("${selectedMeal.title}"),
       ),
-      body: Column(children: <Widget>[
-        Container(
-          height: 300,
-          width: double.infinity,
-          child: Image.network(
-            selectedMeal.imageUrl,
-            fit: BoxFit.cover,
-          ),
-        ),
-        buildSelectionTitle(context, "INGREDIENTS"),
-        Container(
-          decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(10)),
-          margin: EdgeInsets.all(3),
-          padding: EdgeInsets.all(3),
-          height: 200,
-          width: 300,
-          child: ListView.builder(
-            itemBuilder: (ctx, index) => Card(
-              color: Theme.of(context).primaryColor,
-              child: Container(
-                padding: EdgeInsets.all(4),
-                child: Text("  ${selectedMeal.ingredients[index]}"),
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Container(
+              height: 300,
+              width: double.infinity,
+              child: Image.network(
+                selectedMeal.imageUrl,
+                fit: BoxFit.cover,
               ),
             ),
-            itemCount: selectedMeal.ingredients.length,
-          ),
+            buildSelectionTitle(context, "INGREDIENTS"),
+            buildContainer(
+              ListView.builder(
+                itemBuilder: (ctx, index) => Card(
+                  color: Theme.of(context).primaryColor,
+                  child: Container(
+                    padding: EdgeInsets.all(4),
+                    child: Text("  ${selectedMeal.ingredients[index]}"),
+                  ),
+                ),
+                itemCount: selectedMeal.ingredients.length,
+              ),
+            ),
+            buildSelectionTitle(context, "Steps"),
+            buildContainer(
+              ListView.builder(
+                itemBuilder: (ctx, index) => Column(
+                  children: [
+                    ListTile(
+                      leading: CircleAvatar(
+                        child: Text('# ${(index + 1)}'),
+                      ),
+                      title: Text(selectedMeal.steps[index]),
+                    ),
+                    Divider()
+                  ],
+                ),
+                itemCount: selectedMeal.steps.length,
+              ),
+            ),
+          ],
         ),
-        buildSelectionTitle(context, "Steps"),
-      ]),
+      ),
     );
   }
 }
